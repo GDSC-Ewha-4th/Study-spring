@@ -50,4 +50,4 @@ GDSC Ewha 4기 '스프링부트와 JPA 스터디'입니다.
 ### ✅ 출석
 
 스프레드시트에 각자 체크하기
-(https://docs.google.com/spreadsheets/d/1PhbRkrzaSlC_TOz3VL1kugAvU2JxXA8GRMY16IcA7ow/edit#gid=186001220)
+https://docs.google.com/spreadsheets/d/1PhbRkrzaSlC_TOz3VL1kugAvU2JxXA8GRMY16IcA7ow/edit#gid=186001220
