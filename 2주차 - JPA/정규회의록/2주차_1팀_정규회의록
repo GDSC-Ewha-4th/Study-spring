@@ -1,1 +1,64 @@
 
+<정규 회의록>
+일시 : 2022.09.04
+
+범위 : 스프링 웹 개발 기초
+
+강의 : 김영한의 스프링 입문 - 코드로 배우는 스프링 부트, 웹 MVC, DB 접근 기술
+
+활동 : 각 멤버가 github에 올린 내용 정리본 읽고 공부한 내용에 대해 발표 및 질의응답
+
+정리 : https://github.com/GDSC-Ewha-4th
+
+사진 : 
+
+<스터디 내용>
+
+1. 정적 컨텐츠
+from. 길동)
+
+서버에서 따로 가공을 거치지 않고 파일을 웹 브라우저에 그대로 보내는 방식이다.
+
+동작 원리
+
+1. 스프링은 hello-spring으로 요청이 들어오면 관련 컨트롤러를 찾는다.
+
+2. 없는 경우 정적 컨텐츠를 찾아 그대로 반환해준다.
+
+ 
+
+2. MVC와 템플릿 엔진
+from. 이화)
+
+MVC: Model, View, Controller
+
+동작 원리
+
+1. 웹 브라우저에서 hello-mvc를 넘기면 내장 톰켓 서버를 먼저 거친다.
+
+2. 스프링 컨테이너에서 helloController는 mapping이 되있는 것을 확인하고 그 메서드를 호출한다.
+
+3. Model 객체에 key는 name, value는 spring인 attribute를 추가하고 hello-template으로 반환한다.
+
+4. viewResolver가 return의 string과 똑같은 hello-template을 찾아서 Tymeleaf 템플릿 엔진 처리로 넘긴다.
+
+5. 템플릿 엔진이 렌더링해서 html을 변환 후 넘겨준다.
+
+
+3. API
+from. 철수)
+
+@ResponseBody 문자 반환
+
+@ResponseBody 를 사용하면 뷰 리졸버( viewResolver )를 사용하지 않음
+대신에 HTTP의 BODY에 문자 내용을 직접 반환(HTML BODY TAG를 말하는 것이 아님)
+@ResponseBody 객체 반환
+
+@ResponseBody 를 사용하고, 객체를 반환하면 객체가 JSON으로 변환됨
+@ResponseBody 사용 원리
+
+HTTP의 BODY에 문자 내용을 직접 반환
+viewResolver 대신에 HttpMessageConverter 가 동작
+기본 문자처리: StringHttpMessageConverter
+기본 객체처리: MappingJackson2HttpMessageConverter
+byte 처리 등등 기타 여러 HttpMessageConverter가 기본으로 등록되어 있음
