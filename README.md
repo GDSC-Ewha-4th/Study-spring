@@ -22,14 +22,14 @@ GDSC Ewha 4기 스프링부트와 JPA 스터디 입니다.
 |:----:|:---------:|:----:|:-----:|:------:|
 | 1차시 | 2022.09.27 |  OT  |     -     |[바로가기](https://github.com/GDSC-Ewha-4th/Study-spring/tree/main/00.%20%EC%B2%ABOT)|
 | 2차시 | 2022.10.04 |자바 ORM 표준 JPA 프로그래밍-기본편|[바로가기](https://github.com/GDSC-Ewha-4th/Study-spring/tree/main/2%EC%A3%BC%EC%B0%A8%20-%20JPA/%EB%82%B4%EC%9A%A9%EC%A0%95%EB%A6%AC%EB%B3%B8)|[바로가기](https://github.com/GDSC-Ewha-4th/Study-spring/tree/main/2%EC%A3%BC%EC%B0%A8%20-%20JPA/%EC%A0%95%EA%B7%9C%ED%9A%8C%EC%9D%98%EB%A1%9D)|
-| 3차시 | 2022.10.25 |자바 ORM 표준 JPA 프로그래밍-기본편|     -     |-|
-| 4차시 | 2022.11.01 |자바 ORM 표준 JPA 프로그래밍-기본편|     -     |-|
-| 5차시 | 2022.11.08 |실전! 스프링 부트와 JPA 활용1|     -     |-|
-| 6차시 | 2022.11.15 |실전! 스프링 부트와 JPA 활용1|     -     |-|
-| 7차시 | 2022.11.22 |실전! 스프링 부트와 JPA 활용2|     -     |-|
-| 8차시 | 2022.11.29 |실전! 스프링 데이터 JPA|     -     |-|
-| 9차시 | 2022.12.27 |실전! 스프링 데이터 JPA|     -     |-|
-| 10차시 | 2022.01.10 |실전! Querydsl|     -     |-|
+| 3차시 | 2022.10.25 |자바 ORM 표준 JPA 프로그래밍-기본편|[바로가기](https://github.com/GDSC-Ewha-4th/Study-spring/tree/main/3%EC%A3%BC%EC%B0%A8%20-%20JPA/%EB%82%B4%EC%9A%A9%EC%A0%95%EB%A6%AC%EB%B3%B8)|[바로가기](https://github.com/GDSC-Ewha-4th/Study-spring/tree/main/3%EC%A3%BC%EC%B0%A8%20-%20JPA/%EC%A0%95%EA%B7%9C%ED%9A%8C%EC%9D%98%EB%A1%9D)|
+| 4차시 | 2022.11.01 |자바 ORM 표준 JPA 프로그래밍-기본편|[바로가기](https://github.com/GDSC-Ewha-4th/Study-spring/tree/main/4%EC%A3%BC%EC%B0%A8%20-%20JPA/%EB%82%B4%EC%9A%A9%EC%A0%95%EB%A6%AC%EB%B3%B8)|[바로가기](https://github.com/GDSC-Ewha-4th/Study-spring/tree/main/4%EC%A3%BC%EC%B0%A8%20-%20JPA/%EC%A0%95%EA%B7%9C%ED%9A%8C%EC%9D%98%EB%A1%9D)|
+| 5차시 | 2022.11.08 |실전! 스프링 부트와 JPA 활용1|[바로가기](https://github.com/GDSC-Ewha-4th/Study-spring/tree/main/5%EC%A3%BC%EC%B0%A8%20-%20%EC%8B%A4%EC%A0%84%ED%99%9C%EC%9A%A91/%EB%82%B4%EC%9A%A9%EC%A0%95%EB%A6%AC%EB%B3%B8)|[바로가기](https://github.com/GDSC-Ewha-4th/Study-spring/tree/main/5%EC%A3%BC%EC%B0%A8%20-%20%EC%8B%A4%EC%A0%84%ED%99%9C%EC%9A%A91/%EC%A0%95%EA%B7%9C%ED%9A%8C%EC%9D%98%EB%A1%9D)|
+| 6차시 | 2022.11.15 |실전! 스프링 부트와 JPA 활용1|[바로가기](https://github.com/GDSC-Ewha-4th/Study-spring/tree/main/6%EC%A3%BC%EC%B0%A8%20-%20%EC%8B%A4%EC%A0%84%ED%99%9C%EC%9A%A91/%EB%82%B4%EC%9A%A9%EC%A0%95%EB%A6%AC%EB%B3%B8)|[바로가기](https://github.com/GDSC-Ewha-4th/Study-spring/tree/main/6%EC%A3%BC%EC%B0%A8%20-%20%EC%8B%A4%EC%A0%84%ED%99%9C%EC%9A%A91/%EC%A0%95%EA%B7%9C%ED%9A%8C%EC%9D%98%EB%A1%9D)|
+| 7차시 | 2022.11.22 |실전! 스프링 부트와 JPA 활용2|[바로가기](https://github.com/GDSC-Ewha-4th/Study-spring/tree/main/7%EC%A3%BC%EC%B0%A8%20-%20%EC%8B%A4%EC%A0%84%ED%99%9C%EC%9A%A92/%EB%82%B4%EC%9A%A9%EC%A0%95%EB%A6%AC%EB%B3%B8)|[바로가기](https://github.com/GDSC-Ewha-4th/Study-spring/tree/main/7%EC%A3%BC%EC%B0%A8%20-%20%EC%8B%A4%EC%A0%84%ED%99%9C%EC%9A%A92/%EC%A0%95%EA%B7%9C%ED%9A%8C%EC%9D%98%EB%A1%9D)|
+| 8차시 | 2022.11.29 |실전! 스프링 데이터 JPA|[바로가기](https://github.com/GDSC-Ewha-4th/Study-spring/tree/main/8%EC%A3%BC%EC%B0%A8%20-%20%EB%8D%B0%EC%9D%B4%ED%84%B0/%EB%82%B4%EC%9A%A9%EC%A0%95%EB%A6%AC%EB%B3%B8)|[바로가기](https://github.com/GDSC-Ewha-4th/Study-spring/tree/main/8%EC%A3%BC%EC%B0%A8%20-%20%EB%8D%B0%EC%9D%B4%ED%84%B0/%EC%A0%95%EA%B7%9C%ED%9A%8C%EC%9D%98%EB%A1%9D)|
+| 9차시 | 2022.12.27 |실전! 스프링 데이터 JPA|[바로가기](https://github.com/GDSC-Ewha-4th/Study-spring/tree/main/9%EC%A3%BC%EC%B0%A8%20-%20%EB%8D%B0%EC%9D%B4%ED%84%B0/%EB%82%B4%EC%9A%A9%EC%A0%95%EB%A6%AC%EB%B3%B8)|[바로가기](https://github.com/GDSC-Ewha-4th/Study-spring/tree/main/9%EC%A3%BC%EC%B0%A8%20-%20%EB%8D%B0%EC%9D%B4%ED%84%B0/%EC%A0%95%EA%B7%9C%ED%9A%8C%EC%9D%98%EB%A1%9D)|
+| 10차시 | 2022.01.10 |실전! Querydsl|[바로가기](https://github.com/GDSC-Ewha-4th/Study-spring/tree/main/10%EC%A3%BC%EC%B0%A8%20-%20%EC%8B%A4%EC%A0%84/%EB%82%B4%EC%9A%A9%EC%A0%95%EB%A6%AC%EB%B3%B8)|[바로가기](https://github.com/GDSC-Ewha-4th/Study-spring/tree/main/10%EC%A3%BC%EC%B0%A8%20-%20%EC%8B%A4%EC%A0%84/%EC%A0%95%EA%B7%9C%ED%9A%8C%EC%9D%98%EB%A1%9D)|
 | 11차시 | 2022.01.17 |스터디 마무리 및 closing session 준비|     -     |-|
 ---
 
