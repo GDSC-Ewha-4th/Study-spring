@@ -1,0 +1,217 @@
+# JPA 소개
+
+# 강좌 소개
+
+JDBC → MyBatis, → JPA
+
+JPA 사용함으로 직접 sql 코드 없이 사용 가능, 코드도 한 두줄로 줄일 수 있음
+
+## 목표
+
+> 객체와 테이브 설계 매핑
+> 
+- 객체와 테이블 제대로 설계하고 매핑하는 법 공부
+- 기본키, 왜래키 매핑
+- 1:N, N:1 1:1, N:M 매핑
+- 실무 노하우
+- 복잡한 시스템도 JPA 설계 가능
+
+> JPA 내부 동작 방식 이해
+> 
+- 동작 방식 이해해야함
+- 어떤 SQL 만들어 내는지 이해
+- 언제 SQL 실행하는지 이해
+
+→ 전체적인 그림 그리기
+
+# JPA 소개
+
+## SQL 중심적인 개발의 문제점
+
+객체를 관계형 DB에 저장
+
+객체를 관계형 데이터베이스 저장
+
+> 객체와 객체형 데이터베이스의 차이
+> 
+1. 상속 (객체형 DB는 상속 x)
+2. 연관관계
+3. 데이터 타입
+
+![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/a76ecfb0-f900-4b45-9948-4ca9a4af4f0a/Untitled.png)
+
+<Album 조회>
+
+1. 각각 테이블에 따른 조인 SQL 작성
+2. 각각 객체 생성해야함
+3. 그래서 DB에 저장할 객체에는 상속 관계 사용안함(복잡해서)
+
+→ DB가 아닌 자바 컬렉션에 저장하는게 더 편해보임
+
+계층형 아키텍처 진정한 의미의 계층 분할이 어렵다.
+
+모델링 할수록 매핑 작업만 늘어난다.
+
+➡️ 그래서 객체를 컬렉션에 저장하듯이, **관게형 데이터 베이스에 저장하고 불러오도록 하는 것이 JPA이다.**
+
+## JPA 소개
+
+> jpa란 ?
+> 
+
+자바 진영의 ORM 기술 표준
+
+> ORM
+> 
+- Object-relational-mapping (객체 관계 매핑)
+- 객체는 객체대로 설계하고, 관계형 데이터베이스는 관계형 데이터베이스대로 설계
+- ORM이 중간의 차이들을 해결해주는 것임
+
+> JPA는 애플리케이션과 JDBC 사이에서 동작
+> 
+
+![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/22cc55cd-cc55-41a1-a4fe-68e0d70573f6/Untitled.png)
+
+- JPA에게 명령 보내면 JDBC 사용해서 SQL 호출하고 결과 반환
+
+> JPA 동작 - 저장
+> 
+
+![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/4d82acd1-d4d2-425b-9a06-b8944d607910/Untitled.png)
+
+- jpa가 멤버 객체 보고 select 쿼리 만들어줌
+
+> JPA 동작 - 조회
+> 
+
+![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/eaca27ac-4b3c-4fed-ba84-79f5620f7e9f/Untitled.png)
+
+- JPA는 인터페이스의 모음임
+- 기존 : 필드 변경시 모드 SQL 수정해야함 → JPA : 필드만 추가하고 SQL은 JPA가 처리함
+
+<기존>
+
+![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/e031a713-6ae6-4c6f-9958-2ed75c0fe8c6/Untitled.png)
+
+<JPA>
+
+![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/e5124a60-6eb9-43b2-a6fb-e66cd8c7d082/Untitled.png)
+
+> jpa는 관계형 데이터 베이스와 객체의 패러다임의 불일치를 해결해줌
+> 
+1. JPA와 상속
+2. JPA와 연관관계
+3. JPA와 객체 그래프 탐색
+4. JPA와 비교하기
+
+> JPA와 상속
+> 
+
+![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/8d2ed1d2-84ef-49b3-85c8-f5493f3c97d0/Untitled.png)
+
+- Alubum 객체를 디비에 저장하고 싶은 경우
+    - 개발자는 jpa.persist(album) 만 입력
+    - 나머지는 jpa가 처리해주다
+        - `INSERT INTO ITEM`
+        - `INSERT INO ALBUM`
+
+→ 패러다임 안맞는게 JPA가 알아서 처리해줌
+
+> JPA의 성능 최적하 지원
+> 
+1. 1차 캐시와 동일성(identity) 보장
+2. 트랜잭션을 지원하는 쓰기 지연(transactional write-behind)
+3. 지연 로딩, 즉시로딩
+옵션 변경하여 지연 → 즉시로딩으로 변경 가능함
+    1. 지연 로딩 : 객체가 실제 사용될 때 데이터베이스에서 가져옴
+        
+        ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/bd946b01-6d4e-40b9-b5cc-49a250a162ef/Untitled.png)
+        
+    2. 즉시 로딩 : 멤버 가져오면서 팀도 조인해서 가져옴
+        
+        ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/2eab84dd-6f03-42ff-9efe-2561c8dbd17c/Untitled.png)
+        
+
+ORM은 객체와 RDB 모두 잘알아야함
+
+# JPA 시작하기
+
+## 프로젝트 생성하기
+
+1. h2 데이터베이스 다운 후 생성
+
+![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/376c5a0a-2513-4e1e-8c16-a9c8bcc43e2e/Untitled.png)
+
+- Generic H2 : 실제 DB 처럼 별도로 띄우기 가능
+
+1. 프로젝트 생성 (메이븐으로)
+2. 라이브러리 추가
+3. JPA 설정
+
+## Hello JPA - 애플리케이션 개발
+
+> JPA 구동 방식
+> 
+
+![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/2e687bce-1c81-434a-b539-eb527f5d65a9/Untitled.png)
+
+> 회원 저장
+> 
+- 회원 등록
+- 회원 수정
+- 회원 삭제
+- 회원 단 건 조회
+
+# 영속성 관리 - 내부 동작 방식
+
+## 영속성 컨텍스트
+
+> JPA에서 가장 중요한 2가지
+> 
+1. 객체와 관계형 데이터베이스 매핑하기
+2. 영속성 컨테이너
+
+> 영속성 컨테이너란 ?
+> 
+- JPA 이해하는데 가장 중요한 용어
+- 엔티티 영구 저장하는 환경
+- `EntityManager.persist(entity);`
+
+> 영속성 매니저, 영속성 컨테이너
+> 
+- 영속성 컨테이너는 논리적 개념
+- 눈에 안보이는 개념
+- 엔티티 매니저 통해 영속성 컨테이너 접근
+
+> 엔티티의 생명주기
+> 
+- 비영속  : 영속성 컨테이너와 관계 없는 새로운 상태
+- 영속 : 영속성 컨텍스트에 관리되는 상태
+- 준영속  : 영속성 컨텍스트에 저장되었다가 분리된 상태
+- 삭제
+
+> 영속성 컨텍스트의 이점
+> 
+- 1차 캐시
+- 동일성 보장
+- 트랜잭션을 지원하는 쓰기 지연
+- 변경 감지
+- 지연 로딩
+
+> 플러시
+> 
+- 영속성 컨텍스트의 변경내용을 데이터베이스에 반영
+- 영속성 컨텍스트를 비우지 않음
+- 영속성 컨텍스트의 변경내용을 데이터베이스에 동기화
+- 트랜잭션이라는 작업 단위가 중요 -> 커밋 직전에만 동기화하면 됨
+
+> 플러시 발생시
+> 
+- 변경 감지
+- 수정된 엔티티 쓰기 지연 SQL 저장소에 등록
+
+> 영속성 컨텍스트를 플러시하는 방법
+> 
+- em.flush() - 직접 호출
+- 트랜잭션 커밋 - 플러시 자동 호출
+- JPQL 쿼리 실행 - 플러시 자동 호출
