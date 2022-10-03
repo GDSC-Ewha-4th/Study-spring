@@ -1,0 +1,535 @@
+# __🐸 섹션 1. JPA 소개 🐸__
+
+## __🍀 SQL 중심적인 개발의 문제점__
+
+* 객체를 자바 컬렉션에 저장하듯이 DB에 저장할 수는 없을까? -> JPA
+
+## __🍀 JPA 소개__
+
+JPA
+- Java Persistence API
+- 자바 ORM 표준
+
+ORM
+- Object Relational mapping
+- 객체는 객체대로 설계
+- RDB는 RDB대로 설계
+- ORM 프레임워크가 중간에서 매핑
+- 대중적인 언어에는 대부분 ORM 기술이 존재
+
+JPA는 애플리케이션과 JDBC 사이에서 동작
+
+<img src="https://user-images.githubusercontent.com/86587287/185547467-9817a758-1228-4f5f-a7d8-f9e3f1d91050.png" width=500px>
+
+JPA로 저장
+
+<img src="https://user-images.githubusercontent.com/86587287/185547708-08603c13-3ee5-4958-a17e-644fef4dbb0b.png" width=500px>
+
+JPA로 조회
+
+<img src="https://user-images.githubusercontent.com/86587287/185547758-441796da-9cf3-4779-828f-f5554017c40c.png" width=500px>
+
+* JPA는 인터페이스의 모음
+* JPA의 구현체 - 하이버네이트 ...
+
+JPA를 왜 사용해야 하는가?
+
+1. 생산성
+* 저장: jpa.persist(member)
+* 조회: Member membber = jpa.find(memberId)
+* 수정: member.setName("수정할이름")
+* 삭제: jpa.remove(member)
+
+2. 유지보수
+* 필드를 추가한다고 했을 때, 모든 SQL쿼리에 필드 추가할 필요 X
+* 클래스에 필드만 추가하면 끝. SQL은 JPA가 처리
+
+3. 패러다임의 불일치를 해결
+    - 상속
+    - 연관관계
+    - 객체 그래프 탐색
+    - 비교
+
+4. 성능 최적화
+* 중간에 계층이 생기면 -> 모았다가 주는 버퍼와 캐싱이 가능
+* 1차 캐시와 동일성 보장
+    * 같은 트랜잭션 안에서는 같은 엔티티 반환
+    ```
+    String memberId="100";
+    Member m1 = jpa.find(Member.class, memberId);   // SQL
+    Member m2 = jpa.find(Member.class, memberId);   // 캐시
+    -> m1==m2
+    ```
+* 트랜잭션을 지원하는 쓰기 지연 - 버퍼 기능
+    * 트랜잭션을 커밋할 때까지 INSERT SQL을 모음
+    * JDBC BATCH SQL 기능을 사용해서 한번에 SQL을 모음
+    ```
+    transaction.begin();    // 트랜잭션 시작
+
+    em.persist(memberA);
+    em.persist(memberB);
+    em.persist(memberC);
+    // 여기까지 INSERT SQL을 DB에 보내지 않음
+
+    // 커밋하는 순간 한 번의 네트워크로 DB에 쿼리를 보냄
+    transaction.commit();
+    ```
+    * 이 것을 JPA에서 옵션 하나로 해줄 수 있음
+* 지연 로딩
+    * 지연 로딩 : 객체가 실제로 사용될 때 로딩
+    <img src="https://user-images.githubusercontent.com/86587287/185550297-7149aa25-1cc8-42bb-8198-b474a76b30ea.png" width=450px>
+    * 즉시 로딩 : JOIN SQL로 한번에 연관된 객체까지 미리 조회
+    <img src="https://user-images.githubusercontent.com/86587287/185550220-62a3a31c-4ea8-43f4-b663-5c3d83d6cc90.png" width=450px>
+    * 지연로딩은 즉시로딩에 비해 네트워크로 쿼리를 더 보내야하기 때문에 느릴수도??
+    * 멤버를 쓸 때 팀을 항상 써 -> 즉시 로딩
+    * 멤버만 사용하는 경우가 더 많아 -> 지연 로딩
+    
+    # __🐸 섹션 2. JPA 시작하기 🐸__
+
+## __🍀 Hello JPA - 프로젝트 생성__
+
+### __👽 H2 DB__
+당연히? 데이터베이스가 필요함
+
+* -> H2 DB 사용하기 
+* 실습용으로 좋음
+    * 웹으로 콘솔 가능
+    * 용량도 작고
+    * 라이브러리도 제공
+    * MySQL, Oracle DB 시뮬레이션
+    * 시퀀스, AUTO INCREMENT 기능 지원
+    * DB를 띄우지 않고 메모리에서도 실행 가능
+
+H2 (처음) 사용하는 순서
+1. H2 다운로드
+2. bin 폴더의 h2.sh 실행 -> 웹 콘솔 열림
+3. 처음엔 JDBC URL에 `jdbc:h2:~/test`
+4. -> test.mv.db 생성
+* 생성 안 된 경우 억지로 만들기
+5. 그 다음부턴 `jdbc:h2:~/test`로 접속
+
+### __👽 Maven__
+* Maven으로 생성
+* 자바 버전 11
+* 메이븐은 pom.xml에서 프로젝트 설정
+    * 라이브러리 추가 -> **JPA 하이버네이트 & H2 데이터베이스** 의존
+    * **JPA xml bind** 의존 -> 자바 객체를 XML로 직렬화 & XML을 자바 객체로 역직렬화
+    * +) Lombok도 미리 의존 ㅎㅎ
+
+
+### __👽 JPA 설정 -> persistence.xml__
+* JPA에 관한 설정 파일
+* resources/META-INF/persistence.xml에 위치
+* javax.persistence -> JPA 표준
+* hibernate -> 하이버네이트 전용 속성 (-> 다른 JPA 구현체로 바꾸면 사용 불가..)
+
+### __👽 데이터베이스 방언__
+
+* jpa는 DB에 의존하면 안됨 (종속 X)
+    * -> mysql에서 오라클로 바꿔도 상관 없어야 함
+    * 애초에 JDBC부터가 각 DB에 종속되지 않으려고 있는거니깐...
+
+데이터 베이스의 dialect (방언) ? ?
+* SQL표준과 각각의 DB마다 다른 부분 (->사투리)
+* ex) SQL 표준은 SUBSTRING(), 오라클은 SUBSTR()
+* 페이징 - MYSQL은 LIMIT, 오라클은 ROWNUM...
+* -> JPA 입장에선 방언 (표준(SQL)을 지키지 않음)
+* 방언: SQL 표준을 지키지 않는 특정 데이터베이스만의 고유 기능
+```
+ <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/> 
+```
+* 내가 지금 H2라는 dialect를 사용해.. -> H2에서 표준 SQL과 다른 부분을 사용하는 것도 이해해줌
+
+<img src="https://user-images.githubusercontent.com/86587287/193461635-f51faa35-a1e8-42b0-a61d-030c08c01689.png" width=450px>
+
+* 하이버네이트는 40가지 이상의 데이터베이스 방언을 지원
+
+
+## __🍀 Hello JPA - 애플리케이션 개발__
+
+사실,,, JPA도 다룰 데이터베이스가 있어야지 쓰던가 말던가...
+* 그러니깐 JPA 사용 이전에 미리 DB에 필요한 테이블 생성해두기
+
+### __👽 H2 데이터베이스에 Member 테이블 생성__
+```
+create table Member(
+    id bigint not null,
+    name varchar(255),
+    primary key(id)
+);
+```
+* 데이터 베이스에 Member 테이블 생성
+
+### __👽 Member 클래스 생성__
+* 데이터베이스의 Member 테이블에 매칭되는 Member 클래스 생성
+```
+@Entity(name = "Member")    // 같은 이름이면 생략 가능
+@Getter @Setter
+public class Member {
+    @Id // pk임을 알려줌
+    private Long id;
+
+    private String name;
+}
+```
+* `@Entity` - JPA가 관리할 객체
+* `@Id` - 데이터베이스의 PK와 매핑
+
+
+### __👽 JPA 구동 방식__
+<img src="https://user-images.githubusercontent.com/86587287/193462019-36b141ca-4712-4a27-b6ff-73f10b6566ea.png" width=450px>
+
+* JPA의 `Persistence` 클래스에서 시작
+* persistence.xml에서 설정 정보를 읽어서 `EntityManagerFactory` 클래스를 생성
+* 데이터 처리가 필요할 때마다 팩토리에서 `EntityManger`을 생성해내서 사용
+
+1. **엔티티 매니저 팩토리** -> DB당 하나만 존재 
+* 하나만 생성해서 애플리케이션 전체에 공유
+```
+EntityManagerFactory emf = Persistence.createEntityManagerFactory("hello");
+```
+
+2. 엔티티 매니저 팩토리를 통해 **엔티티 매니저** 생성
+* 엔티티 매니저는 쓰레드간 공유 X (사용 후 바로 버림)
+* JPA를 쓸 일이 있으면 그 때마다 새 엔티티 매니저를 생성해서 사용
+```
+EntityManager em = emf.createEntityManager();
+```
+
+3. 트랜잭션 시작
+* JPA에서 데이터를 변경하는 모~든 작업은 트랜잭션 안에서 해야 함
+```
+EntityTransaction tx = em.getTransaction();
+tx.begin();     // 트랜잭션 시작
+```
+
+4. JPA를 사용해서 데이터 CRUD 후 트랜잭션 종료 (커밋으로)
+* 처리가 끝나면 **커밋**해야함 
+* 성공적이라면...
+* 예외 발생 -> **롤백**
+```
+1. Create
+try{
+    Member member = new Member();
+    member.setId(1L);
+    member.setName("HELLO_A");
+    em.persist(member);
+
+     tx.commit();
+}
+```
+* `em.persist(객체)`
+
+```
+2. Read
+try{
+    Member findMember = em.find(Member.class, 1L);
+
+     tx.commit();
+}
+```
+* `em.find(클래스, PK)`
+* PK로 찾는 간단한 경우 말고 복잡한 조건이 붙을 땐, JPQL 사용
+
+```
+3. Update
+try{
+    Member findMember = em.find(Member.class, 1L);
+    findMember.setName("HELLO_JPA");
+
+    tx.commit();
+}
+```
+* `em.find(클래스, PK)`로 조회 -> 객체를 Setter로 변경
+* JPA를 통해서 조회한 객체는 JPA가 계속 관리
+* 해당 객체를 수정하면 -> JPA가 커밋할 때 바뀌었는지 살펴보고 업데이트 쿼리를 알아서 날려줌
+
+```
+4. Delete
+try{
+    Member findMember = em.find(Member.class, 1L);
+    em.remove(findMember);
+    
+    tx.commit();
+}
+```
+* * `em.find(클래스, PK)`로 조회 -> `em.remove(객체)`
+* 객체를 조회한 후 삭제
+
+5. 리소스 정리
+* 사용한 엔티티 매니저와 최종적으로는 앤티티 매니저 팩토리도 꼭! 종료
+```
+catch(Exception e){
+        em.close();     // entityManager 종료
+    } finally {
+        emf.close();    // entityManager 팩토리도 종료
+    }
+```
+
+### __👽 JPQL__
+* JPA를 사용해서 엔티티 객체를 중심으로 개발..
+* 그런데,, 문제는 검색 쿼리 !! (Read)
+* 검색할 때에도 DB의 테이블이 아닌 **엔티티 객체를 대상으로 검색!!**
+    * 그렇다고.. 모든 DB의 데이터를 객체로 변환 후 검색은 불.가.능.
+    * 필요한 데이터만 DB에서 불러오려면?? 결국은 검색 조건이 포함된 SQL문 필요
+* -> **JPA는 SQL을 추상화한 JPQL이라는 객체 지향 쿼리 언어 제공**
+    * -> 특정 DB 의존 X
+
+비교 
+* JPQL - 엔티티 객체를 대상으로 쿼리, SQL과 유사한 문법
+* SQL - DB의 테이블을 대상으로 쿼리
+
+```
+List<Member> result = em.createQuery("select m from Member as m", Member.class) // select 하고 원하는 모든 필드X, entity를 select
+        .setFirstResult(1)  // 1번부터
+        .setMaxResults(10)  // 10개까지 가져와 -> 페이지네이션
+        .getResultList();
+for (Member member : result) {
+    System.out.println("member.name = " + member.getName());
+}
+```
+`select m from Member as m`
+* 원래 SQL은 select id, name from Member 이런식으로 필드마다 가져와야 하는데, JPQL은 entity 객체를 select할 수 있음
+* 결과를 List\<Member>에 담음
+
+페이지네이션
+* 1번부터(setFirstResult(1)) ~ 최대 10개(setMaxResults(10)) 가져와라
+* JPQL은 DB마다 페이지네이션 방식이 바뀌더라도 상관 없음
+
+# __🐸 섹션 3. 영속성 관리 - 내부 동작 관리 🐸__
+
+## __🍀 영속성 컨텍스트 1__
+
+JPA에서 가장 중요한 2가지
+1. 객체 - RDB 매핑
+2. **영속성 컨텍스트** - 실제 JPA 내부에서 데이터를 어떻게 관리?? 
+
+JPA 내부
+
+<img src="https://user-images.githubusercontent.com/86587287/193485391-7681621d-93ff-4e4e-af9c-46209e99e5d9.png" width=400px>
+
+<br/>
+
+### __👽 영속성 컨텍스트__
+* **엔티티를 영구 저장하는 환경**
+* => `EntityManager.persist(entity)`
+    * 엔티티를 DB에 저장한다는 뜻이 아니라 영속성 컨텍스트에 저장한다는 뜻
+    * **엔티티 매니저를 통해 영속성 컨텍스트에 접근**
+* 논리점 개념 -> 눈에 보이지 않음
+
+앤티티 매니저 - 영속성 컨텍스트
+* 1:1, N:1
+
+<img src="https://user-images.githubusercontent.com/86587287/193485419-a8491d8e-c055-4a0b-ba52-70b2aa9836fe.png" width=400px>
+
+<br/>
+
+### __👽 엔티티 생명 주기__
+
+* 비영속 (new/transient)
+    * 영속성 컨텍스트와 전혀 관계 X, 새로운 상태
+    * `new Member()`로 갓 나온..
+* 영속 (managed)
+    * 영속성 컨텍스트에 관리
+    * `em.persist(member)`로 관리
+* 준영속 (detached)
+    * 영속성 컨텍스트에 저장되었다가 분리된 상태
+* 삭제 (removed)
+    * 삭제된 상태
+
+<img src="https://user-images.githubusercontent.com/86587287/193485604-8b79fd2b-2965-491c-9b23-730242a7a6bf.png" width=450px>
+
+1. 비영속
+```
+Member member = new Member();
+member.setId(1L);
+member.setName("Hello");
+```
+* DB나 JPA와 전혀 상관없는 객체
+
+2. 영속
+```
+em.persist(member);
+```
+* 영속성 컨텍스트에 관리 (앤티티 매니저 필요)
+* 아직 DB에 저장되는 게 아님 (아직 쿼리 날리지 않음)
+
+3. 준영속 & 삭제
+```
+// 회원 엔티티를 영속성 컨텍스트에서 분리
+em.detach(member);
+
+// 객체를 삭제한 상태 
+em.remove(member);
+```
+
+
+## __🍀 영속성 컨텍스트 2__
+
+영속성 컨텍스트의 이점 (=중간에 뭐 하나가 있을 때의 이점)
+* 1차 캐시
+* 동일성 (identity) 보장
+* 트랜잭션을 지원하는 쓰기 지연 (transactional write-behind)
+* 변경 감지 (Dirty Checking)
+* 지연 로딩 (Lazy Loading)
+
+### __👽 1차 캐시__
+* 1차 캐시: [PK - Entity] 맵
+
+<img src="https://user-images.githubusercontent.com/86587287/193499472-b6f17657-d446-4f62-adee-92d22b9c684d.png" width=450px>
+
+* 조회할 때 이점이 있음
+* DB까지 가지 않고 1차 캐시에서 조회 가능
+```
+// 1차 캐시에 저장됨
+em.persist(member);
+
+// 1차 캐시에서 조회
+em.find(Member.class, "member1"); -> 조회 쿼리 필요 X
+```
+
+* DB에는 있는데, 1차 캐시에는 없는 경우?
+
+<img src="https://user-images.githubusercontent.com/86587287/193500638-e974fd29-66d5-4844-9f13-3b73c868951c.png" width=450px>
+
+* em.find로 조회했을 때, 1차 캐시에 없음?
+* DB에서 조회 (select 쿼리 날림)
+* 조회 결과를 1차 캐시에 저장
+* 값을 반환
+* -> 다음에 같은 값을 조회하면 1차 캐시에서 조회 가능!
+
+```
+Member findMember1 = em.find(Member.class, 101L); // 1차 캐시에 없음 -> 조회 쿼리
+Member findMember2 = em.find(Member.class, 101L); // 1차 캐시에 있음
+```
+
+그런데,,,  엔티티 매니저(영속성 컨텍스트)는 트랜잭션 단위 
+* -> 영속성 컨텍스트도 한 트랜잭션이 끝나면 지움
+* -> 매우 찰나의 이점.. 정도? 큰 이득은 없음..
+
+### __👽 동일성 보장__
+
+* 자바 컬렉션에서도 같은 걸 가져오면 == 비교할 때 같다고 판단
+```
+Member findMember1 = em.find(Member.class, 101L);
+Member findMember2 = em.find(Member.class, 101L);
+findMember1 = findMember2
+```
+* 자바 컬렉션에서는 같은 주소(ref)이기 때문에 같다고 판단
+* JPA에서도 엔티티의 동일성을 보장
+* 1차 캐시 덕분에 "반복 가능한 읽기 등급"의 트랜잭션 격리 수준을 DB가 아닌 애플리케이션 차원에서 제공
+    * -> 이 엔티티 비교가 같은 트랜잭션 안에서 이루어져야 됨
+
+### __👽 트랜잭션을 지원하는 "쓰기 지연"__
+```
+EntityManager em = emf.createEntityManager();
+EntityTransaction tx = em.getTransaction();
+tx.begin(); // 데이터 변경전 트랜잭션 시작
+
+em.persist(member1);
+em.persist(member2);
+// 아직 INSERT SQL을 DB에 보내지 않음
+
+// 커밋하는 순간 DB에 INSERT SQL을 보냄
+tx.commit();
+```
+* JPA는 트랜잭션 커밋 전까지는 INSERT SQL 쿼리 날리는 것을 지연
+
+<img src="https://user-images.githubusercontent.com/86587287/193555585-bb48fd3b-1b4a-48ab-ad84-99479236f8fc.png" width=450px>
+
+* persist로 엔티티를 1차 캐시에 저장해둠
+* INSERT SQL 쿼리(쓰기) 를 "쓰기 지연 SQL 저장소"에 저장해둠
+
+<img src="https://user-images.githubusercontent.com/86587287/193556561-ddfb15fa-b4c0-4b7e-844d-bd9a75a6c2b9.png" width=450px>
+
+* 트랜잭션 commit()
+* flush - DB로 저장해 둔 INSRET SQL을 보냄
+* JPA도 commit.
+
+### __👽 변경 감지__
+1. 엔티티 변경
+
+```
+Member member = em.find(Member.class, 150L);
+member.setName("ASDF");
+
+// em.update(member) or em.persist(member); -> 이런 코드가 있어야 되는 거 아닌가?
+
+transaction.commit();
+```
+
+마치 **자바 컬렉션처럼 ! !**
+* setter로 변경한 다음에 persist라던가.. 이런걸 신경 쓸 필요 없음
+* 트랜잭션이 커밋하는 시점에 알아서 체크해줌
+
+<img src="https://user-images.githubusercontent.com/86587287/193558368-e512819a-f6e4-494a-acf7-5cc824d10aa5.png" width=500px>
+
+* 엔티티와 스냅샷을 비교
+* 달라졌다면 UPDATE SQL을 생성 후, **쓰기 지연 SQL 저장소에 모아둠**
+* 트랜잭션이 커밋하면 그 때, **flush**
+
+2. 엔티티 삭제
+```
+Member member = em.find(Member.class, 150L);    // 엔티티 조회
+
+em.remove(member);  // 삭제
+```
+
+### __👽 지연 로딩__
+
+* 지연 로딩 : 객체가 실제로 사용될 때 로딩
+<img src="https://user-images.githubusercontent.com/86587287/185550297-7149aa25-1cc8-42bb-8198-b474a76b30ea.png" width=450px>
+* 지연로딩은 즉시로딩에 비해 네트워크로 쿼리를 더 보내야하기 때문에 느릴수도??
+* 멤버를 쓸 때 팀을 항상 써 -> 즉시 로딩
+* 멤버만 사용하는 경우가 더 많아 -> 지연 로딩
+
+
+## __🍀 플러시__
+
+* 영속성 컨텍스트의 변경 내용을 DB에 반영
+
+### __👽 플러시 발생하면 발생하는 일__
+
+1. 변경 감지 (Dirty Checking)
+2. 수정된 엔티티 - 쓰기 지연 SQL 저장소에 등록 (INSERT, UPDATE, DELETE)
+3. 저장소에 있는 쿼리를 DB에 전송 
+
+### __👽 플러시를 발생시키는 법__
+* `em.flush` - 직접 호출
+* `transaction.commit` - 플러시 자동 호출
+* `JPQL 쿼리 실행` - 플러시 자동 호출
+
+플러시를 하게 되어도 **1차 캐시는 남아있음**
+* 변경감지, 영속성 컨텍스트의 쓰기 지연 SQL 저장소만 바뀜
+
+### __👽 JPQL 쿼리 실행시 플러시가 자동 호출되는 이유__
+```
+em.persist(memberA);
+em.persist(memberB);
+em.persist(memberC);
+// 아직 INSERT 쿼리가 날라가지 않음
+
+// JPQL로 조회 쿼리
+em.createQuery("select m from Member m", Member.class);
+List<Member> members = query.getResultList();
+```
+* JPQL로 DB를 조회해야 하는데...
+* 평소에는 트랜잭션 커밋할 때 INSERT SQL도 날리지만,,,
+* DB 조회를 위해서 변경사항을 미리 반영하기
+
+### __👽 플러시 모드 옵션__
+* FlushModeType.AUTO
+    * 디폴트
+    * 커밋이나 쿼리를 실행할 때 플러시
+* FlushModeType.COMMIT
+    * 커밋할 때만 플러시 -> 잘 안 씀
+
+### __👽 정리__
+
+* 플러시는 영속성 컨텍스트를 비우는 것이 아님
+* 영속성 컨텍스트의 변경 내용을 DB에 동기화
+    * -> 쓰기 지연 SQL 저장소 쿼리를 DB에 날리기
+* **트랜잭션** 이라는 작업 단위가 중요!
+
+## __🍀 준영속 상태__
+
