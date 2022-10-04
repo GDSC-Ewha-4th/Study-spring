@@ -20,7 +20,7 @@ GDSC Ewha 4기 스프링부트와 JPA 스터디 입니다.
 ## ✏️ 커리큘럼   
 | 차시 |    날짜    | 주제 | 정리본 | 회의록 |
 |:----:|:---------:|:----:|:-----:|:------:|
-| 1차시 | 2022.09.27 |  OT  |     -     |[바로가기](https://github.com/GDSC-Ewha-4th/Study-spring/tree/main/00.%20%EC%B2%ABOT)|
+| 1차시 | 2022.09.27 |  OT  |     -     |[바로가기](https://gdscewha.tistory.com/entry/2%EC%A3%BC%EC%B0%A82%ED%8C%80%EC%A0%95%EA%B7%9C%ED%9A%8C%EC%9D%98%EB%A1%9D?category=1045450)|
 | 2차시 | 2022.10.04 |자바 ORM 표준 JPA 프로그래밍-기본편|[바로가기](https://github.com/GDSC-Ewha-4th/Study-spring/tree/main/2%EC%A3%BC%EC%B0%A8%20-%20JPA)|[바로가기](https://gdscewha.tistory.com/category/4-1%EA%B8%B0%20%EC%8A%A4%ED%84%B0%EB%94%94/Spring%20boot%EC%99%80%20JPA%20%EA%B8%B0%EC%B4%88)|
 | 3차시 | 2022.10.25 |자바 ORM 표준 JPA 프로그래밍-기본편|[바로가기](https://github.com/GDSC-Ewha-4th/Study-spring/tree/main/3%EC%A3%BC%EC%B0%A8%20-%20JPA)|[바로가기](https://gdscewha.tistory.com/category/4-1%EA%B8%B0%20%EC%8A%A4%ED%84%B0%EB%94%94/Spring%20boot%EC%99%80%20JPA%20%EA%B8%B0%EC%B4%88)|
 | 4차시 | 2022.11.01 |자바 ORM 표준 JPA 프로그래밍-기본편|[바로가기](https://github.com/GDSC-Ewha-4th/Study-spring/tree/main/4%EC%A3%BC%EC%B0%A8%20-%20JPA)|[바로가기](https://gdscewha.tistory.com/category/4-1%EA%B8%B0%20%EC%8A%A4%ED%84%B0%EB%94%94/Spring%20boot%EC%99%80%20JPA%20%EA%B8%B0%EC%B4%88)|
