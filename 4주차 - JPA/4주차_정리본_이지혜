@@ -1,0 +1,86 @@
+#### 8. 프록시와 연관관계 정리
+1. 프록시
+- 한가지 상황을 생각해 보자. Member 엔티티의 외래키로 Team 엔티티가 존재한다고 할때 Member을 조회할 떄 Team도 함께 조회해야 하는 것일까? 
+- `em.find()` vs `em.getReference()` 를 비교 해보자. 전자는 데이터베이스를 통해서 실제 entity 객체를 조회하고, 후자는 데이터베이스의 조회를 밀는 가짜 entity 객체고 조회한다.
+    - `em.getReference()` 메서드를 사용하면 진짜 객체가 아닌 Hibernate 내부의 로직으로 **프록시 엔티티 객체를 반환**한다.
+    - 이 경우에 내부 구조는 틀은 같지만 내용이 비어있다.
+
+- 프록시는 실제 클래스를 상속 받아서 만들어지기 때문에 표면적으로 생긴 모양이 동일하다. 그래서 사용하는 입장에서는 proxy 객체인지 진짜 객체인지 구분하지 않고 사용해도 된다. -> 다만 실제 객체의 참조를 보관하고 있어서 프록시 객체를 호출하면 실제 객체의 메소드를 호출한다.
+
+
+2. 프록시의 특징
+- 프록시 객체는 원래 객체를 감싸고 있는 객체이다. 원래의 객체와 타입은 동일하지만 프록시 객체에 client의 요청이 들어오면 원래 객체를 호출하게 되는 것이다.
+- 프록시 패턴을 쓰는 이유는 접근을 제어하고 싶거나, 부가 기능을 추가하고 싶을 때 사용한다.
+EventService라는 interface가 있고,
+```
+public interface EventService {
+    void createEvent();
+
+    void publishEvent();
+}
+```
+EventService를 inplement한 TestEventService가 있다고 하면
+```
+@Service
+public class TestEventService implements EventService {
+    @Override
+    public void createEvent() {
+        System.out.println("Create Event");
+    }
+
+    @Override
+    public void publishEvent() {
+        System.out.println("Publish Event");
+    }
+}
+```
+위와 같은 경우에 createEvent, publishEvent 메서드에 동일한 기능을 하는 코드를 넣고 싶다면 각각 메서드를 다시 정의해서 넣어주는 것은 효율성이 떨어진다. 이럴떄에 사용하는 것이 **프록시 패턴**이다.
+- 즉, database table을 조회해서 객체를 가져올 때에 연관관계 객체는 가져오고 싶지 않을 때에 사용하는 패턴이다.
+- 프록시 패턴이 이렇게 보면 객체 상속과 차이가 없는 것처럼 느껴질 수 있으나, 객체를 상속 받는 것은 객체가 다른 객체를 상속받아 상속 받은 객체의 요소를 사용하는 것이다.
+
+3. 프록시 객체의 초기화
+- 프록시 객체를 초기화한다는 것은 프록시 객체가 실제 사용될 때에 database를 조회해서 실제 엔티티 객체를 생성하는 것을 의미한다.
+```
+Member findMember = em.getReference(Member.class, member.getId()); // 프록시 객체를 생성한다. 
+findMember.getName(); // 초기화를 통해서 실제 entity가 생성된다.
+```
+- client가 (1) `getName()`을 MemberProxy에 요청하면 영속성 context에 (2) 초기화 요청을 한다. 그리고 영속성 context는 (3) database 조회를 하고 (4) database는 실제 entity를 생성한다. 마지막으로 생성된(생성되어 있는 경우에는 존재하는 실제 entity에 요청을 한다.) entity에 (5) `target.getName()`을 통해서 결과를 반환한다.
+
+
+
+
+
+4. 즉시 로딩과 지연 로딩
+- 엔티티를 조회할 때에 연관된 엔티티들이 항상 사용되는 것은 아니다. 만약에 Member 엔티티만 조회하고 싶을 떄에 `em.find()`로 Member과 연관된 Team엔티티까지 database에서 함께 조회해 두는 것은 효율적이지 않다.
+    - 따라서 JPA가 이런 조회 지연을 해결하기 위한 방법으로 **지연 로딩**을 제공한다.
+    - 지연 로딩 기능을 사용하려면 실제 엔티티 객체 대신에 database 조회를 지연할 수 있는 가짜 객체인 proxy 객체가 존재한다.
+- 지연 로딩 LAZY를 사용해서 프록시로 조회가 가능하다. (가급적이면 즉시 loading 보다 실무에서는 지연 loading을 사용하는 것을 권장한다.)
+```
+@Entity
+public class Member {
+    @Id
+    @GeneratedValue
+    private Long id;
+    
+    @Column(name="USERNAME")
+    private String name;
+
+    @ManyToOne(fetch = FetchType.LAZY) // ManyToOne, OneToOne은 기본이 즉시 로딩이다.
+    @JoinColumn(name = "TEAM_ID")
+    private Team team;
+}
+```
+- 나름의 로딩 종류를 결정하는 조건이 있는데, 지연로딩은 가끔 함께 사용하는 entity에 대해서, 즉시 로딩은 자주 함꼐 사용하는 entity에 대해서 사용해야 한다.
+
+
+5. 영속성 전이: CASCADE
+- 특정 entity를 영속 상태로 만들 때에 연관된 entity도 함께 영속 상태로 만들고 싶을 때 사용한다.
+```
+CascadeType.ALL; // 모두 적용
+CascadeType.PERSIST; // 영속
+CascadeType.REMOVE; // 삭제
+CascadeType.MERGE; // 병합
+```
+
+6. 고아객체
+- 고아객체를 제거한다는 것은 부모 엔티티와 연관 관계가 끊어진 자식 엔티티를 자동으로 삭제하는 것을 의미한다.
